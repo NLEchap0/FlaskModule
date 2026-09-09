@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product{% endblock %}
+
+{% block content %}
+<h1>Add a New Product</h1>
+
+
+{% if errors %}
+<div class="errros">
+    <ul>
+        {% for field, message in errors.items() %}
+        <li><strong>{{field}}</strong>: {{message}}</li>
+        {% endfor %}
+    </ul>
+
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('frontend.product_form_submit')}}">
+    <div>
+        <label for="name" class="form-label">Name</label>
+        <input type="text" id="name" name="name" class="form-control" required>
+    </div>
+    
+    <div>
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" name="description" class="form-control" rows="10"></textarea>
+    </div>
+    
+    <div>
+        <label for="price" class="form-label">Price</label>
+        <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required>
+    </div>
+    <div>
+        <label for="category" class="form-label">Category</label>
+        <select id="category" name="category" class="form-control" required>
+            <option value="">Select a category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Food">Food</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add product</button>
+</form>
+
+
+<!-- TODO: Create a form with method="POST" and action="/form" -->
+<!-- The form should include the following fields: -->
+<!--   - name (text input, required) -->
+<!--   - description (textarea) -->
+<!--   - price (number input, min=0, step=0.01) -->
+<!--   - category (select dropdown with: Electronics, Clothing, Food, Other) -->
+<!--   - submit button -->
+
+{% endblock %}
