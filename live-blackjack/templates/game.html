@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Live Blackjack{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="brand">
+            <span class="brand-suit">♠</span>
+            <span class="brand-name">ROYAL <b>BLACKJACK</b></span>
+            <span class="brand-suit">♥</span>
+        </div>
+        <div class="session-chip" id="session-info"></div>
+    </nav>
+
+    <main class="table-wrap">
+        <!-- Schermata di ingresso -->
+        <div id="join-screen" class="join-screen">
+            <div class="join-card">
+                <div class="join-logo">♠</div>
+                <h1>Benvenuto al tavolo</h1>
+                <p class="join-sub">Ogni tab ha la sua sessione indipendente.<br>Siediti e sfida gli altri giocatori in tempo reale.</p>
+                <div class="join-input">
+                    <input type="text" id="player-name" class="join-field" placeholder="Il tuo nome" maxlength="20" autocomplete="off">
+                    <button id="join-btn" class="btn-gold">Prendi posto</button>
+                </div>
+                <div id="join-error" class="join-error"></div>
+            </div>
+        </div>
+
+        <!-- Tavolo di gioco -->
+        <div id="game-screen" class="d-none">
+            <div class="table-grid">
+                <div class="table-main">
+                    <div class="felt">
+                        <div class="felt-ring">BLACKJACK PAGA 3 A 2 · IL BANCO SI FERMA A 17</div>
+
+                        <div class="seat seat-dealer">
+                            <div class="seat-label">BANCO <span id="dealer-value" class="value-pill"></span></div>
+                            <div id="dealer-hand" class="hand"></div>
+                        </div>
+
+                        <div class="table-center">
+                            <div id="game-message" class="result-banner d-none"></div>
+                        </div>
+
+                        <div class="seat seat-player">
+                            <div class="seat-label">TU <span id="player-value" class="value-pill"></span></div>
+                            <div id="player-hand" class="hand"></div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button id="new-game-btn" class="btn-action btn-deal">
+                            <span class="btn-ico">♦</span> NUOVA MANO
+                        </button>
+                        <button id="hit-btn" class="btn-action btn-hit" disabled>
+                            <span class="btn-ico">+</span> CARTA
+                        </button>
+                        <button id="stand-btn" class="btn-action btn-stand" disabled>
+                            <span class="btn-ico">✋</span> STAI
+                        </button>
+                    </div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="panel score-panel">
+                        <div class="panel-title">Il tuo punteggio</div>
+                        <div class="chips-row">
+                            <div class="chip chip-gold"><span id="my-score">0</span></div>
+                        </div>
+                        <div class="score-legend">
+                            <span><i class="dot dot-win"></i>Vittoria +10</span>
+                            <span><i class="dot dot-draw"></i>Pareggio +2</span>
+                            <span><i class="dot dot-loss"></i>Perdita −5</span>
+                        </div>
+                        <div class="wl-stats" id="wl-stats">0 vittorie · 0 pareggi · 0 sconfitte</div>
+                    </div>
+
+                    <div class="panel board-panel">
+                        <div class="panel-title">Classifica live
+                            <span id="conn-status" class="conn-badge">connessione…</span>
+                        </div>
+                        <table class="board">
+                            <thead>
+                                <tr><th>Giocatore</th><th>Punti</th><th>V/P/S</th></tr>
+                            </thead>
+                            <tbody id="leaderboard"></tbody>
+                        </table>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

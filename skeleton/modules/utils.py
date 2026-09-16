@@ -1,8 +1,8 @@
 import os
 import json
-
-
-PRODUCTS_DATA_FILE = "products.json"
+from flask import jsonify
+from models.conn import db
+from models.model import Product
 
 def validate_product(data):
     errors = {}
@@ -32,22 +32,25 @@ def validate_product(data):
     return errors
 
 def save_product(data):
-    #TODO read all products
-    products = read_products()
-    
-    #TODO append new product to list of products
-    products.append(data)
-    
-    #TODO save
-    save_all_products(products)
+    #product = Product(**data)
+    product = Product(name = data['name'],
+                      description = data['description'],
+                      price= data['price']
+                      )
+    try:
+        db.session.add(product)
+        db.session.commit()
+        return jsonify(product.to_dict()), 201
+    except Exception as e:
+        response = {'error':str(e), 'message':'error while saving product'}
+        return jsonify(response), 500
 
-def save_all_products(products):
-    with open(PRODUCTS_DATA_FILE, "w") as f:
-        json.dump(products, f, indent=2)
 
 def read_products():
-    try:
-        with open(PRODUCTS_DATA_FILE, 'r') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
+    #read all Product obejct as model and return a json list
+    data = []
+    products = Product.query.all()
+    for product in products:
+        data.append( product.to_dict() )
+    return data
+
