@@ -184,10 +184,8 @@ body {
     color: #9aa3ad;
 }
 
-/* stato connessione */
-#conn-status { font-size: 0.7rem; color: #9aa3ad; }
-#conn-status.online { color: #2ecc71; }
-#conn-status.offline { color: #e74c3c; }
+/* form dentro i pannelli laterali */
+.panel form { margin-top: 14px; }
 
 /* classifica */
 .board { width: 100%; border-collapse: collapse; font-size: 0.88rem; }

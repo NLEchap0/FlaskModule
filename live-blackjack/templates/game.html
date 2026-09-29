@@ -8,28 +8,87 @@
 <body>
     <nav class="topbar">
         <span class="brand">♠ ROYAL BLACKJACK</span>
-        <span id="session-info"></span>
+        <span id="session-info">
+            {% if player %}Sessione #{{ player.id }} · {{ player.name }}{% endif %}
+        </span>
     </nav>
 
+    {% if not player %}
+        <!-- schermata di ingresso: un form classico che manda il nome al server -->
+        <div class="modal-overlay">
+            <div class="modal-card">
+                <h2>Benvenuto al tavolo</h2>
+                <form method="post" action="{{ url_for('frontend.join') }}">
+                    <input type="text" id="player-name" name="name" placeholder="Il tuo nome"
+                           maxlength="20" autocomplete="off" required>
+                    <button class="btn btn-gold">Prendi posto</button>
+                </form>
+            </div>
+        </div>
+
+    {% else %}
     <main class="container">
         <!-- tavolo di gioco -->
         <div class="table">
             <div class="seat">
-                <div class="seat-label">BANCO <span id="dealer-value" class="value-pill"></span></div>
-                <div id="dealer-hand" class="hand"></div>
-                <!-- messaggio vinto/perso/pareggio, sotto al banco -->
-                <div id="game-message" class="result-banner"></div>
+                <div class="seat-label">BANCO
+                    <span class="value-pill">{{ data.dealer_value if data else '' }}</span>
+                </div>
+                <div class="hand">
+                    {% if data %}
+                        {% for card in data.dealer_hand %}
+                            <div class="card-slot {{ 'red' if card.suit in ['♥', '♦'] else '' }}"
+                                 data-corner="{{ card.rank }}{{ card.suit }}">
+                                {{ card.suit }}<small>{{ card.rank }}</small>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="result-banner {{ 'rb-' + data.outcome if data and data.status == 'finished' else '' }}">
+                    {% if data and data.status == 'finished' %}
+                        {% if data.outcome == 'win' %}
+                            ♠ JACKPOT — HAI VINTO! +{{ data.delta }} PUNTI
+                        {% elif data.outcome == 'draw' %}
+                            ✦ PAREGGIO +{{ data.delta }} PUNTI
+                        {% else %}
+                            ✖ HAI PERSO {{ data.delta|abs }} PUNTI
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
 
             <div class="seat">
-                <div class="seat-label">TU <span id="player-value" class="value-pill"></span></div>
-                <div id="player-hand" class="hand"></div>
+                <div class="seat-label">TU
+                    <span class="value-pill">{{ data.player_value if data else '' }}</span>
+                </div>
+                <div class="hand">
+                    {% if data %}
+                        {% for card in data.player_hand %}
+                            <div class="card-slot {{ 'red' if card.suit in ['♥', '♦'] else '' }}"
+                                 data-corner="{{ card.rank }}{{ card.suit }}">
+                                {{ card.suit }}<small>{{ card.rank }}</small>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
 
             <div class="actions">
-                <button id="new-game-btn" class="btn btn-gold">NUOVA MANO</button>
-                <button id="hit-btn" class="btn" disabled>CARTA</button>
-                <button id="stand-btn" class="btn" disabled>STAI</button>
+                <form method="post" action="{{ url_for('frontend.new_game') }}">
+                    <button class="btn btn-gold" {% if data and data.status == 'playing' %}disabled{% endif %}>
+                        NUOVA MANO
+                    </button>
+                </form>
+                <form method="post" action="{{ url_for('frontend.hit') }}">
+                    <button class="btn" {% if not data or data.status != 'playing' %}disabled{% endif %}>
+                        CARTA
+                    </button>
+                </form>
+                <form method="post" action="{{ url_for('frontend.stand') }}">
+                    <button class="btn" {% if not data or data.status != 'playing' %}disabled{% endif %}>
+                        STAI
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -37,33 +96,35 @@
         <aside class="sidebar">
             <div class="panel">
                 <div class="panel-title">Il tuo punteggio</div>
-                <div id="my-score" class="big-score">0</div>
-                <div class="legend">Vittoria +10 · Pareggio +2 · Perdita −5</div>
-                <div id="wl-stats">0 vittorie · 0 pareggi · 0 sconfitte</div>
+                <div class="big-score">{{ player.score }}</div>
+                <div class="legend">Vittoria +10 · Pareggio +0 · Perdita −10</div>
+                <div id="wl-stats">
+                    {{ player.wins }} vittorie · {{ player.draws }} pareggi · {{ player.losses }} sconfitte
+                </div>
+                <form method="post" action="{{ url_for('frontend.leave') }}">
+                    <button class="btn">Esci dal tavolo</button>
+                </form>
             </div>
 
             <div class="panel">
-                <div class="panel-title">Classifica <span id="conn-status">connessione…</span></div>
+                <div class="panel-title">Classifica</div>
                 <table class="board">
                     <thead>
                         <tr><th>Giocatore</th><th>Punti</th><th>V/P/S</th></tr>
                     </thead>
-                    <tbody id="leaderboard"></tbody>
+                    <tbody>
+                        {% for p in players %}
+                        <tr {% if p.id == player.id %}class="me"{% endif %}>
+                            <td>{{ p.name }}{% if p.id == player.id %} (tu){% endif %}</td>
+                            <td class="score-cell">{{ p.score }}</td>
+                            <td class="wdl-cell">{{ p.wins }}/{{ p.draws }}/{{ p.losses }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </aside>
     </main>
-
-    <!-- modale di ingresso, sopra alla UI principale -->
-    <div id="join-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h2>Benvenuto al tavolo</h2>
-            <input type="text" id="player-name" placeholder="Il tuo nome" maxlength="20" autocomplete="off">
-            <button id="join-btn" class="btn btn-gold">Prendi posto</button>
-            <div id="join-error"></div>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    {% endif %}
 </body>
 </html>
