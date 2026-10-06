@@ -1,4 +1,12 @@
 .venv/
 __pycache__/
-instance/
 *.pyc
+
+# segreti: mai committati
+.env
+.env.*
+!.env-example
+
+# database creato in locale
+instance/
+*.db

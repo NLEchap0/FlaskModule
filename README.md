@@ -1,7 +1,11 @@
-Commands for every project:
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install flask
+# Flask Module
 
-pip freeze > .\requirements.txt
-pip install -r .\requirements.txt
+Progetti del modulo Flask.
+
+## Progetti
+
+| Progetto | Descrizione |
+|---|---|
+| [live-blackjack](live-blackjack/README.md) | Blackjack con database, migrazioni e test |
+
+Setup, configurazione `.env`, migrazioni e test: vedi il README di ogni progetto.

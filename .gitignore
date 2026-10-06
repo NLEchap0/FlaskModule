@@ -1,3 +1,19 @@
-*.venv/
-*__pycache__/
-*.git/
+# ambienti virtuali e codice compilato
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# segreti e configurazione locale
+.env
+.env.*
+!.env-example
+
+# database e file generati
+instance/
+*.db
+
+# editor e sistema
+.idea/
+.vscode/
+Thumbs.db
