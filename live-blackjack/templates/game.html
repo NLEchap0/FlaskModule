@@ -20,7 +20,7 @@
                 <h2>Benvenuto al tavolo</h2>
                 <form method="post" action="{{ url_for('frontend.join') }}">
                     <input type="text" id="player-name" name="name" placeholder="Il tuo nome"
-                           maxlength="20" autocomplete="off" required>
+                           maxlength="80" autocomplete="off" required>
                     <button class="btn btn-gold">Prendi posto</button>
                 </form>
             </div>
@@ -97,7 +97,10 @@
             <div class="panel">
                 <div class="panel-title">Il tuo punteggio</div>
                 <div class="big-score">{{ player.score }}</div>
-                <div class="legend">Vittoria +10 · Pareggio +0 · Perdita −10</div>
+                <div class="legend">
+                    Vittoria +{{ score_delta.win }} · Pareggio +{{ score_delta.draw }} ·
+                    Perdita −{{ score_delta.loss|abs }}
+                </div>
                 <div id="wl-stats">
                     {{ player.wins }} vittorie · {{ player.draws }} pareggi · {{ player.losses }} sconfitte
                 </div>

@@ -7,8 +7,6 @@ body {
     color: #eceff3;
 }
 
-.hidden { display: none !important; }
-
 /* barra in alto */
 .topbar {
     display: flex;
@@ -244,4 +242,3 @@ body {
     margin-bottom: 14px;
 }
 
-#join-error { color: #e74c3c; margin-top: 10px; font-size: 0.9rem; }

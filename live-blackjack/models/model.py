@@ -11,17 +11,6 @@ class Player(db.Model):
     wins = db.Column(db.Integer, nullable=False, default=0)
     draws = db.Column(db.Integer, nullable=False, default=0)
     losses = db.Column(db.Integer, nullable=False, default=0)
-    created_at = db.Column(db.DateTime, default=db.func.now())
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'score': self.score,
-            'wins': self.wins,
-            'draws': self.draws,
-            'losses': self.losses,
-        }
 
 
 # ogni riga è una mano di blackjack, con le carte salvate come JSON

@@ -1,6 +1,5 @@
-# FUNZIONAMENTO GENERALE DEL GIOCO
-# qui si gestisce il ciclo di una mano: inizio, pesca, banco, risultato.
-# Le carte sono gestite da modules/cards.py, la memoria è il database
+# ciclo di una mano: inizio, pesca, banco, risultato
+# le carte sono gestite da modules/cards.py, la memoria è il database
 from models.conn import db
 from models.model import Player, Game
 from modules import cards
@@ -33,16 +32,15 @@ def game_data(hand):
 
 # inizia una nuova mano: distribuisce le carte e le salva nel database
 def start_game(player):
-    # se era rimasta una mano a metà (per esempio pagina ricaricata) la cancello
+    # elimina una eventuale mano rimasta a metà (per esempio dopo un refresh)
     old = active_game(player.id)
     if old:
         db.session.delete(old)
 
+    deck = cards.new_deck()
     hand = Game(player_id=player.id)
-    hand.deck = cards.new_deck()
 
     # il giocatore riceve 2 carte, il banco 1
-    deck = list(hand.deck)
     hand.player_hand = [deck.pop(), deck.pop()]
     hand.dealer_hand = [deck.pop()]
     hand.deck = deck
@@ -67,7 +65,7 @@ def player_draws(hand):
     value = cards.hand_value(cards_in_hand)
 
     # se sballa o fa 21 la mano finisce e tocca al banco
-    if value > 21 or value == 21:
+    if value >= 21:
         dealer_finishes(hand)
 
 
@@ -94,7 +92,7 @@ def finish_game(hand):
     player = db.session.get(Player, hand.player_id)
     delta = SCORE_DELTA[hand.outcome]
 
-    player.score = player.score + delta
+    player.score += delta
     if hand.outcome == 'win':
         player.wins += 1
     elif hand.outcome == 'loss':

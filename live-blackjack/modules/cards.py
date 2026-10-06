@@ -1,6 +1,5 @@
-# LOGICA DELLE CARTE
-# funzioni "pure": lavorano solo su liste e dizionari,
-# non sanno nulla di Flask né del database
+# logica delle carte: funzioni pure, lavorano solo su liste e dizionari
+# e non sanno nulla di Flask né del database
 import random
 
 SUITS = ['♠', '♥', '♦', '♣']
